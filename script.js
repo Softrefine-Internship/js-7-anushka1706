@@ -227,9 +227,9 @@ function updateScores(index) {
   }
   const scoreIcon = document.querySelector(".score-icon");
   scoreIcon.classList.add("bounce");
-  setTimeout(() => {
-    scoreIcon.classList.remove("bounce");
-  }, 500);
+  // setTimeout(() => {
+  //   scoreIcon.classList.remove("bounce");
+  // }, 500);
   score.textContent = currentScore;
 }
 nextBtn.addEventListener("click", () => {
