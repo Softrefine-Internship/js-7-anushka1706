@@ -1,4 +1,6 @@
 //
+"use strict";
+
 const categoryMap = {
   general: 9,
   books: 10,
@@ -100,7 +102,7 @@ async function fetchQuestions(api) {
 
     let data = await response.json();
     updateProgress(100);
-    
+
     if (data.response_code === 0) {
       progressLabel.innerHTML = "Quiz ready! Start your game.";
       await new Promise((resolve) => setTimeout(resolve, 500));
@@ -142,7 +144,8 @@ function displayQuestions(data, index = 0) {
   console.log(data);
   switchView("playQuiz");
   topicName.textContent = data[index].category;
-  type = data[0].type;
+  type = data[0].difficulty;
+  console.log(type);
   currentQuestion.textContent = `${index + 1} / ${data.length}`;
   questionElement.textContent = `Q : ${data[index].question}`;
 
@@ -227,53 +230,49 @@ function updateScores(index) {
   }
   const scoreIcon = document.querySelector(".score-icon");
   scoreIcon.classList.add("bounce");
-  // setTimeout(() => {
-  //   scoreIcon.classList.remove("bounce");
-  // }, 500);
+  setTimeout(() => {
+    scoreIcon.classList.remove("bounce");
+  }, 500);
   score.textContent = currentScore;
 }
 nextBtn.addEventListener("click", () => {
-  console.log(currentIndex,fetchedQuestions.length)
-  if (currentIndex + 1 === fetchedQuestions.length) {
+  if (currentIndex + 1 < fetchedQuestions.length) {
+    currentIndex += 1;
+    displayQuestions(fetchedQuestions, currentIndex);
+  } else {
     exitBtn.style.display = "none";
     nextBtn.style.display = "none";
-    if (document.querySelector(".last-question")) {
-      const resultBtn = document.querySelector(".last-question");
-      resultBtn.style.display = "block";
-    } else {
-      const showResultbtn = document.createElement("button");
-      showResultbtn.className = "last-question";
-      showResultbtn.textContent = "See Result";
-      playBtns.appendChild(showResultbtn);
-      showResultbtn.addEventListener("click", () => {
+    let resultBtn = document.querySelector(".last-question");
+    if (!resultBtn) {
+      resultBtn = document.createElement("button");
+      resultBtn.className = "last-question";
+      resultBtn.textContent = "See Result";
+      playBtns.appendChild(resultBtn);
+      resultBtn.addEventListener("click", () => {
         switchView("quizResult");
         updateBadge();
       });
     }
-  } else {
-    currentIndex += 1;
-    displayQuestions(fetchedQuestions, currentIndex);
+    resultBtn.style.display = "block";
   }
 });
+
 exitBtn.addEventListener("click", function () {
   updateBadge();
   switchView("quizResult");
 });
 function updateScores(index) {
-  let scoreIncrement = 0;
   switch (fetchedQuestions[index].difficulty) {
     case "hard":
-      scoreIncrement = 15;
+      currentScore += 15;
       break;
     case "medium":
-      scoreIncrement = 10;
+      currentScore += 10;
       break;
     case "easy":
-      scoreIncrement = 5;
+      currentScore += 5;
       break;
   }
-
-  currentScore += scoreIncrement;
 
   const scoreIcon = document.querySelector(".score-icon");
   scoreIcon.classList.add("bounce");
@@ -285,6 +284,7 @@ function updateScores(index) {
 }
 function getTitle() {
   let maxScorePerQuestion;
+  console.log(type);
   switch (type) {
     case "hard":
       maxScorePerQuestion = 15;
@@ -295,12 +295,13 @@ function getTitle() {
     case "easy":
       maxScorePerQuestion = 5;
       break;
-    default:
-      maxScorePerQuestion = 10;
   }
 
   let totalScore = maxScorePerQuestion * fetchedQuestions.length;
   let percent = (currentScore / totalScore) * 100;
+
+  const resultScore = document.querySelector(".result-score");
+  resultScore.textContent = `${currentScore} / ${totalScore}`;
   if (percent >= 90) return "Champion";
   if (percent >= 80) return "Mastermind";
   if (percent >= 70) return "Knowledge Seeker";
@@ -320,9 +321,6 @@ function updateBadge() {
 
   const title = document.querySelector(".score-title");
   title.textContent = getTitle();
-
-  const resultScore = document.querySelector(".result-score");
-  resultScore.textContent = `${currentScore} / ${fetchedQuestions.length * 15}`;
 
   document.querySelectorAll(".badge-container div").forEach((div) => {
     div.style.display = "none";
@@ -404,9 +402,9 @@ function resetQuizForm() {
   const resultBtn = document.querySelector(".last-question");
   if (resultBtn) resultBtn.style.display = "none";
   const title = document.querySelector(".score-title");
-  titleText = title.textContent;
+  console.log(title, "555");
   document.querySelector(
-    `.${title.textContent.toLowerCase().replace(" ", "-")}`
+    `.${title.textContent.trim().toLowerCase().replace(" ", "-")}`
   ).style.display = "none";
 }
 
