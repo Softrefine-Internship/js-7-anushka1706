@@ -236,12 +236,17 @@ function updateScores(index) {
   score.textContent = currentScore;
 }
 nextBtn.addEventListener("click", () => {
-  if (currentIndex + 1 < fetchedQuestions.length) {
+  console.log(currentIndex, fetchedQuestions.length);
+
+  if (currentIndex < fetchedQuestions.length - 1) { 
     currentIndex += 1;
     displayQuestions(fetchedQuestions, currentIndex);
-  } else {
+  }
+
+  if (currentIndex === fetchedQuestions.length - 1) { 
     exitBtn.style.display = "none";
     nextBtn.style.display = "none";
+
     let resultBtn = document.querySelector(".last-question");
     if (!resultBtn) {
       resultBtn = document.createElement("button");
