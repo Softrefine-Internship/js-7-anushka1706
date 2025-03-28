@@ -64,6 +64,7 @@ function submitAction(event) {
   if (
     !numQuestions ||
     numQuestions <= 0 ||
+    numQuestions > 50 ||
     !Number.isInteger(Number(numQuestions))
   ) {
     errors.push("Please enter a valid number of questions.");
@@ -141,21 +142,18 @@ function setupEventListeners() {
   });
 }
 function displayQuestions(data, index = 0) {
-  console.log(data);
   switchView("playQuiz");
   topicName.textContent = data[index].category;
   type = data[0].difficulty;
-  console.log(type);
   currentQuestion.textContent = `${index + 1} / ${data.length}`;
-  questionElement.textContent = `Q : ${data[index].question}`;
-
-  const correctAnswer = data[index].correct_answer;
+  questionElement.textContent = `Q : ${decodeHtml(data[index].question)}`;
+  const correctAnswer = decodeHtml(data[index].correct_answer);
   const firstOptions = [correctAnswer, ...data[index].incorrect_answers];
   firstOptions.sort(() => Math.random() - 0.5);
 
   if (!state.userAnswers[index]) {
     state.userAnswers[index] = {
-      question: data[index].question,
+      question: decodeHtml(data[index].question),
       userAnswer: "Not answered",
       correctAnswer: correctAnswer,
       isCorrect: false,
@@ -213,6 +211,12 @@ function displayQuestions(data, index = 0) {
     });
   });
 }
+function decodeHtml(html) {
+  console.log("decode");
+  const div = document.createElement("div");
+  div.innerHTML = html;
+  return div.textContent || div.innerText || "";
+}
 function updateScores(index) {
   console.log("score");
   switch (fetchedQuestions[index].difficulty) {
@@ -238,12 +242,12 @@ function updateScores(index) {
 nextBtn.addEventListener("click", () => {
   console.log(currentIndex, fetchedQuestions.length);
 
-  if (currentIndex < fetchedQuestions.length - 1) { 
+  if (currentIndex < fetchedQuestions.length - 1) {
     currentIndex += 1;
     displayQuestions(fetchedQuestions, currentIndex);
   }
 
-  if (currentIndex === fetchedQuestions.length - 1) { 
+  if (currentIndex === fetchedQuestions.length - 1) {
     exitBtn.style.display = "none";
     nextBtn.style.display = "none";
 

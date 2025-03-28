@@ -397,6 +397,11 @@ select:hover {
   font-weight: 500;
   margin: 0 auto;
 }
+.max-question{
+  color:red;
+  font-weight: 500;
+  display: block;
+}
 .allAnswers {
   overflow-y: auto;
   max-height: 90%;
