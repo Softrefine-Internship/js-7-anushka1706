@@ -1,4 +1,3 @@
-//
 "use strict";
 
 const categoryMap = {
@@ -80,7 +79,6 @@ function submitAction(event) {
 }
 
 async function fetchQuestions(api) {
-  console.log(123);
   questionConfig.classList.add("hide");
   progressContainer.style.display = "flex";
   updateProgress(1);
@@ -184,17 +182,14 @@ function displayQuestions(data, index = 0) {
     label.style.backgroundColor = "";
 
     input.addEventListener("change", (event) => {
-      console.log("Option selected:", event.target.value);
       document.querySelectorAll(".radio-play").forEach((btn) => {
         btn.disabled = true;
       });
 
       if (event.target.value === correctAnswer) {
-        console.log("Correct answer selected!");
         label.style.backgroundColor = "lightgreen";
         updateScores(index);
       } else {
-        console.log("Incorrect answer selected!");
         label.style.backgroundColor = "lightcoral";
         document.querySelector(
           `input[value="${correctAnswer}"]`
@@ -212,13 +207,11 @@ function displayQuestions(data, index = 0) {
   });
 }
 function decodeHtml(html) {
-  console.log("decode");
   const div = document.createElement("div");
   div.innerHTML = html;
   return div.textContent || div.innerText || "";
 }
 function updateScores(index) {
-  console.log("score");
   switch (fetchedQuestions[index].difficulty) {
     case "hard":
       currentScore += 15;
@@ -240,8 +233,6 @@ function updateScores(index) {
   score.textContent = currentScore;
 }
 nextBtn.addEventListener("click", () => {
-  console.log(currentIndex, fetchedQuestions.length);
-
   if (currentIndex < fetchedQuestions.length - 1) {
     currentIndex += 1;
     displayQuestions(fetchedQuestions, currentIndex);
@@ -270,30 +261,8 @@ exitBtn.addEventListener("click", function () {
   updateBadge();
   switchView("quizResult");
 });
-function updateScores(index) {
-  switch (fetchedQuestions[index].difficulty) {
-    case "hard":
-      currentScore += 15;
-      break;
-    case "medium":
-      currentScore += 10;
-      break;
-    case "easy":
-      currentScore += 5;
-      break;
-  }
-
-  const scoreIcon = document.querySelector(".score-icon");
-  scoreIcon.classList.add("bounce");
-  setTimeout(() => {
-    scoreIcon.classList.remove("bounce");
-  }, 500);
-
-  score.textContent = currentScore;
-}
 function getTitle() {
   let maxScorePerQuestion;
-  console.log(type);
   switch (type) {
     case "hard":
       maxScorePerQuestion = 15;
@@ -411,7 +380,6 @@ function resetQuizForm() {
   const resultBtn = document.querySelector(".last-question");
   if (resultBtn) resultBtn.style.display = "none";
   const title = document.querySelector(".score-title");
-  console.log(title, "555");
   document.querySelector(
     `.${title.textContent.trim().toLowerCase().replace(" ", "-")}`
   ).style.display = "none";
